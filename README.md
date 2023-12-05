@@ -16,9 +16,6 @@ Installation
         Flask: A lightweight web framework for Python.
         MySQL Connector: A driver for connecting Python to a MySQL database.
 
-    Run the following command to install these packages:
-
-    bash
 
 pip install flask mysql-connector-python
 
@@ -40,9 +37,7 @@ Database Configuration:
 Running the Application:
 
     Navigate to the project directory and run:
+    python main.py
 
-    bash
-
-python main.py
 
 This will start the Flask server and the website can be accessed locally.

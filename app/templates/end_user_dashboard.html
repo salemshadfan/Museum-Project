@@ -1,0 +1,101 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Art Objects Dashboard</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: #f4f4f4;
+        }
+    
+        header {
+            background-color: #333;
+            color: white;
+            text-align: center;
+            padding: 15px 0;
+        }
+    
+        main {
+            padding: 20px;
+        }
+    
+        ul {
+            list-style-type: none;
+            padding: 0;
+        }
+    
+        li {
+            background-color: #fff;
+            border: 1px solid #ddd;
+            padding: 10px;
+            margin-bottom: 10px;
+            border-radius: 5px;
+        }
+    
+        h3 {
+            margin-top: 0;
+        }
+    
+        p {
+            margin: 5px 0;
+        }
+    </style>
+    
+</head>
+<body>
+    <header>
+        <h1>Art Objects Dashboard</h1>
+    </header>
+
+    <main>
+        <ul>
+            {% for object in art_objects %}
+                <li>
+                    <h3>{{ object.Title }}</h3>
+                    <p>Artist: {{ object.Artist }}</p>
+                    <p>Year: {{ object.Year }}</p>
+                    <p>Type: {{ object.Type }}</p>
+                    <p>Description: {{ object.Descrip }}</p>
+                    <p>Origin: {{ object.Origin }}</p>
+                    <p>Epoch: {{ object.Epoch }}</p>
+                </li>
+            {% else %}
+                <li>No art objects found.</li>
+            {% endfor %}
+        </ul>
+        <h2>Exhibitions</h2>
+        <ul>
+            {% for exhibition in exhibitions %}
+                <li>
+                    <h3>{{ exhibition.Name }}</h3>
+                    <p>Exhibition Number: {{ exhibition.Ex_no }}</p>
+                    <p>Start Date: {{ exhibition.Start_date }}</p>
+                    <p>End Date: {{ exhibition.End_date }}</p>
+                </li>
+            {% else %}
+                <li>No exhibitions found.</li>
+            {% endfor %}
+        </ul>
+
+        <h2>Collections</h2>
+        <ul>
+            {% for collection in collections %}
+                <li>
+                    <h3>{{ collection.Name }}</h3>
+                    <p>Collection ID: {{ collection.Col_id }}</p>
+                    <p>Type: {{ collection.Type }}</p>
+                    <p>Description: {{ collection.Description }}</p>
+                    <p>Address: {{ collection.Address }}</p>
+                    <p>Contact: {{ collection.Contact_person }}</p>
+                </li>
+            {% else %}
+                <li>No collections found.</li>
+            {% endfor %}
+        </ul>
+    </main>
+</body>
+</html>

@@ -1,0 +1,180 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Admin Dashboard</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f4f4f4;
+            margin: 0;
+            padding: 0;
+        }
+    
+        h1, h2 {
+            color: #333;
+        }
+    
+        .container {
+            width: 80%;
+            margin: 20px auto;
+            padding: 10px;
+        }
+    
+        button {
+            background-color: #030507;
+            color: white;
+            padding: 10px 15px;
+            margin: 5px 0;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+    
+        button:hover {
+            background-color: #1d2024;
+        }
+    
+        form {
+            background-color: #fff;
+            padding: 20px;
+            margin-top: 20px;
+            border-radius: 5px;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+        }
+    
+        input[type='text'], input[type='password'], input[type='number'], input[type='date'], select, textarea {
+            width: 100%;
+            padding: 10px;
+            margin: 10px 0;
+            border-radius: 5px;
+            border: 1px solid #ccc;
+        }
+    
+        input[type='submit'] {
+            width: 100%;
+            padding: 10px;
+            background-color: #0f1610;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+    
+        input[type='submit']:hover {
+            background-color: #0f1610;
+        }
+    
+        .tab {
+            display: none;
+        }
+    
+        .tab.active {
+            display: block;
+        }
+    </style>
+    
+    <script>
+        function openTab(tabName) {
+            var i, x;
+            x = document.getElementsByClassName("tab");
+            for (i = 0; i < x.length; i++) {
+                x[i].style.display = "none";  
+            }
+            document.getElementById(tabName).style.display = "block";  
+        }
+    </script>
+</head>
+<body>
+    <h1>Admin Dashboard</h1>
+    <div>
+        <button onclick="openTab('AddUser')">Add User</button>
+        <button onclick="openTab('DeleteUser')">Delete User</button>
+        <button onclick="openTab('EditUser')">Edit / Block Users</button>
+        <button onclick="openTab('DatabaseMod')">Database Modification</button>
+    </div>
+    {% with messages = get_flashed_messages() %}
+        {% if messages %}
+            {% for message in messages %}
+                <div>{{ message }}</div>
+            {% endfor %}
+        {% endif %}
+    {% endwith %}
+
+    <div id="AddUser" class="tab">
+        <h2>Add New User</h2>
+        <form action="/add_user" method="post">
+            <label for="username">Username:</label><br>
+            <input type="text" id="username" name="username" required><br>
+            <label for="password">Password:</label><br>
+            <input type="password" id="password" name="password" required><br>
+            <label for="role">Role:</label><br>
+            <select id="role" name="role" required>
+                <option value="admin">Admin</option>
+                <option value="data_entry">Data Entry User</option>
+                <option value="end_user">End User</option>
+            </select><br><br>
+            <input type="submit" value="Add User">
+        </form>
+    </div>
+
+    <div id="DeleteUser" class="tab">
+        <h2>Delete User</h2>
+        <form action="/delete_user" method="post">
+            <label for="delete_username">Username:</label><br>
+            <input type="text" id="delete_username" name="delete_username" required><br>
+            <input type="submit" value="Delete User">
+        </form>
+    </div>
+    <div id="EditUser" class="tab">
+        <h2>Edit / Block Users</h2>
+
+        <div>
+            <h3>Edit User Role</h3>
+            <form action="/edit_user_role" method="post">
+                <label for="edit_username">Username:</label><br>
+                <input type="text" id="edit_username" name="edit_username" required><br>
+                <label for="new_role">New Role:</label><br>
+                <select id="new_role" name="new_role" required>
+                    <option value="admin">Admin</option>
+                    <option value="data_entry_user">Data Entry User</option>
+                    <option value="end_user">End User</option>
+                </select><br><br>
+                <input type="submit" value="Edit Role">
+            </form>
+        </div>
+    
+
+        <div>
+            <h3>Block / Unblock User</h3>
+            <form action="/block_unblock_user" method="post">
+                <label for="block_username">Username:</label><br>
+                <input type="text" id="block_username" name="block_username" required><br>
+                <label for="block_status">Action:</label><br>
+                <select id="block_status" name="block_status" required>
+                    <option value="block">Block</option>
+                    <option value="unblock">Unblock</option>
+                </select><br><br>
+                <input type="submit" value="Update Status">
+            </form>
+        </div>
+    </div>
+    
+
+    <div id="DatabaseMod" class="tab">
+        <h2>Database Modification</h2>
+        <form action="/modify_database" method="post">
+            <label for="sql_query">SQL Query:</label><br>
+            <textarea id="sql_query" name="sql_query" rows="4" cols="50" required></textarea><br>
+            <input type="submit" value="Execute Query">
+        </form>
+    </div>
+    
+    <script>
+
+        openTab('AddUser');
+    </script>
+</body>
+
+
+
+</html>

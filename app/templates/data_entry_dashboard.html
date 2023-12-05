@@ -1,0 +1,313 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Data Entry Dashboard</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f4f4f4;
+            margin: 0;
+            padding: 0;
+        }
+    
+        h1, h2 {
+            color: #333;
+        }
+
+        .h1{
+           fill: #333;
+        }
+    
+        .container {
+            width: 50%;
+            margin: auto;
+            overflow: hidden;
+        }
+    
+        .art-object, .permanent-item, .borrowed-item, .exhibition-item, .collection-item, .other-art-object-item, .sculpture-item, .painting-item {
+            background-color: #fff;
+            padding: 15px;
+            margin-bottom: 10px;
+            border-radius: 5px;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.2);
+        }
+    
+        form {
+            margin-bottom: 20px;
+        }
+    
+        input[type='text'], input[type='number'], input[type='date'], select, textarea {
+            width: 50%;
+            padding: 10px;
+            margin: 10px 0;
+            border-radius: 5px;
+            border: 1px solid #ddd;
+        }
+    
+        input[type='submit'] {
+            display: block;
+            width: 50%;
+            padding: 10px;
+            margin-top: 10px;
+            background-color: #333;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+    
+        input[type='submit']:hover {
+            background-color: #555;
+        }
+    
+        .edit-btn {
+            background-color: #020203;
+            color: white;
+            padding: 10px 15px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            margin-right: 5px;
+        }
+    
+        .edit-btn:hover {
+            background-color: #31353a;
+        }
+    </style>
+    
+</head>
+<body>
+    <h1>Data Entry Dashboard </h1>
+
+    <h2>Add New Art Object</h2>
+    <form action="/add_art_object" method="post">
+        ID Number: <input type="number" name="id_no" required><br>
+        Title: <input type="text" name="title" required><br>
+        Artist: <input type="text" name="artist" required><br>
+        Year: <input type="number" name="year" required><br>
+        Description: <input type="text" name="descrip" required><br>
+        Type: <select name="type" required>
+            <option value="PAINTING">Painting</option>
+            <option value="SCULPTURE">Sculpture</option>
+            <option value="STATUE">Statue</option>
+            <option value="OTHER">Other</option>
+        </select><br>
+        Category: <select name="category" required>
+            <option value="PERMANENT_COLLECTION">Permanent Collection</option>
+            <option value="BORROWED">Borrowed</option>
+        </select><br>
+        Origin: <input type="text" name="origin" required><br>
+        Epoch: <input type="text" name="epoch" required><br>
+        Ex_no: <input type="number" name="ex_no" required><br>
+        <input type="submit" value="Add">
+    </form>
+    
+
+    <h2>Existing Art Objects</h2>
+    {% for obj in art_objects %}
+    <div class="art-object">
+        <p>{{ obj[2] }} - {{ obj[1] }} - {{ obj[3] }}</p>
+        <button class="edit-btn" data-section="Ab" data-id="{{ obj[0] }}">Edit</button>
+        <form action="/remove_art_object/{{ obj[0] }}" method="post">
+            <input type="submit" value="Remove">
+        </form>
+        <form id="editFormAb{{ obj[0] }}" action="/modify_art_object/{{ obj[0] }}" method="post" style="display: none;">
+            Title: <input type="text" name="title" value="{{ obj[3] }}"><br>
+            Artist: <input type="text" name="artist" value="{{ obj[1] }}"><br>
+            Year: <input type="number" name="year" value="{{ obj[2] }}"><br>
+            Description: <textarea name="descrip">{{ obj[4] }}</textarea><br>
+            Type: <input type="text" name="type" value="{{ obj[5] }}"><br>
+            Category: <input type="text" name="category" value="{{ obj[6] }}"><br>
+            Origin: <input type="text" name="origin" value="{{ obj[7] }}"><br>
+            Epoch: <input type="text" name="epoch" value="{{ obj[8] }}"><br>
+            Exhibition Number (Ex_no): <input type="number" name="ex_no" value="{{ obj[9] }}"><br>
+            <input type="submit" value="Update">
+        </form>
+    </div>
+{% endfor %}
+<div class = "permanent_collection">
+    <h2>Permanent Collection </h2>
+    {% for item in permanent_collection %}
+        <div class="permanent-item">
+            <p>ID: {{ item[0] }} | Cost: {{ item[1] }} | Date Acquired: {{ item[2] }} | Status: {{ item[3] }}</p>
+            <button class="edit-btn" data-section="Pc" data-id="{{ item[0] }}">Edit</button>
+            <form action="/remove_permanent_item/{{ item[0] }}" method="post">
+                <input type="submit" value="Remove">
+            </form>
+            <form id="editFormPc{{ item[0] }}" action="/modify_permanent_item/{{ item[0] }}" method="post" style="display: none;"> 
+                Date Acquired: <input type="number" name="date_acquired" value="{{ item[2] }}"><br>
+                Cost: <input type="number" name="cost" value="{{ item[1] }}"><br>
+                Status: <select name="status">
+                    <option value="on display" {% if item.Status == 'on display' %}selected{% endif %}>On Display</option>
+                    <option value="on loan" {% if item.Status == 'on loan' %}selected{% endif %}>On Loan</option>
+                    <option value="stored" {% if item.Status == 'stored' %}selected{% endif %}>Stored</option>
+                </select><br>
+                <input type="submit" value="Update">
+            </form>
+        </div>
+    {% endfor %}
+</div>
+
+<h2>Borrowed Items</h2>
+
+
+{% for item in borrowed %}
+    <div class="borrowed-item">
+        <p>ID: {{ item[0] }} | Borrowed From: {{ item[1] }} | Date Borrowed: {{ item[2] }} | Date Returned: {{ item[3] }}</p>
+        <button class="edit-btn" data-section="Borrowed" data-id="{{ item[0] }}">Edit</button>
+        <form action="/remove_borrowed_item/{{ item[0] }}" method="post">
+            <input type="submit" value="Remove">
+        </form>
+        <form id="editFormBorrowed{{ item[0] }}" action="/modify_borrowed_item/{{ item[0] }}"style="display: none;" method="post" >
+            Borrowed From: <input type="text" name="borrowed_from" value="{{ item[1] }}" required><br>
+            Date Borrowed: <input type="number" name="date_borrowed" value="{{ item[2] }}" required><br>
+            Date Returned: <input type="number" name="date_returned" value="{{ item[3] }}"><br>
+            <input type="submit" value="Update">
+
+        </form>
+    </div>
+{% endfor %}
+
+
+<h2>Exhibitions</h2>
+
+
+<form action="/add_exhibition" method="post">
+    Exhibition ID: <input type="number" name="ex_no" required><br>
+    Name: <input type="text" name="name" required><br>
+    Start Date: <input type="date" name="start_date" required><br>
+    End Date: <input type="date" name="end_date" required><br>
+    <input type="submit" value="Add Exhibition">
+</form>
+
+{% for exhibition in exhibitions %}
+    <div class="exhibition-item">
+        <p>ID: {{ exhibition[0] }} | Name: {{ exhibition[1] }} | Start Date: {{ exhibition[2] }} | End Date: {{ exhibition[3] }}</p>
+        <button class="edit-btn" data-section="Exhibition" data-id="{{ exhibition[0] }}">Edit</button>
+        <form action="/remove_exhibition/{{ exhibition[0] }}" method="post">
+            <input type="submit" value="Remove">
+        </form>
+        <form id="editFormExhibition{{ exhibition[0] }}" action="/modify_exhibition/{{ exhibition[0] }}" method="post" style="display: none;">
+            Name: <input type="text" name="name" value="{{ exhibition[1] }}" required><br>
+            Start Date: <input type="number" name="start_date" value="{{ exhibition[2] }}" required><br>
+            End Date: <input type="number" name="end_date" value="{{ exhibition[3] }}" required><br>
+            <input type="submit" value="Update">
+        </form>
+    </div>
+{% endfor %}
+
+<h2>Collections</h2>
+
+
+<form action="/add_collection" method="post">
+    Collection ID: <input type="number" name="col_id" required><br>
+    Name: <input type="text" name="name" required><br>
+    Type: <select name="type">
+        <option value="museum">Museum</option>
+        <option value="personal">Personal</option>
+    </select><br>
+    Description: <textarea name="description" required></textarea><br>
+    Address: <input type="text" name="address"><br>
+    Phone: <input type="text" name="phone"><br>
+    Contact Person: <input type="text" name="contact_person"><br>
+    <input type="submit" value="Add Collection">
+</form>
+
+
+{% for collection in collections %}
+    <div class="collection-item">
+        <p>ID: {{ collection[0] }} | Name: {{ collection[1] }} | Type: {{ collection[2] }}</p>
+        <button class="edit-btn" data-section="Collection" data-id="{{ collection[0] }}">Edit</button>
+        <form action="/remove_collection/{{ collection[0] }}" method="post">
+            <input type="submit" value="Remove">
+        </form>
+        <form id="editFormCollection{{ collection[0] }}" action="/modify_collection/{{ collection[0] }}" method="post" style="display: none;">
+            Name: <input type="text" name="name" value="{{ collection[1] }}" required><br>
+            Type: <select name="type">
+                <option value="museum" {% if collection[2] == 'museum' %}selected{% endif %}>Museum</option>
+                <option value="personal" {% if collection[2] == 'personal' %}selected{% endif %}>Personal</option>
+            </select><br>
+            Description: <textarea name="description">{{ collection[3] }}</textarea><br>
+            Address: <input type="text" name="address" value="{{ collection[4] }}"><br>
+            Phone: <input type="text" name="phone" value="{{ collection[5] }}"><br>
+            Contact Person: <input type="text" name="contact_person" value="{{ collection[6] }}"><br>
+            <input type="submit" value="Update">
+        </form>
+    </div>
+{% endfor %}
+
+<h2>Other Art Objects</h2>
+
+{% for item in other_art_objects %}
+    <div class="other-art-object-item">
+        <p>ID: {{ item[0] }} | Type: {{ item[1] }} | Style: {{ item[2] }}</p>
+        <button class="edit-btn" data-section="OtherArtObject" data-id="{{ item[0] }}">Edit</button>
+        <form action="/remove_other_art_object/{{ item[0] }}" method="post">
+            <input type="submit" value="Remove">
+        </form>
+        <form id="editFormOtherArtObject{{ item[0] }}" action="/modify_other_art_object/{{ item[0] }}" method="post" style="display: none;">
+            Type: <input type="text" name="type" value="{{ item[1] }}" required><br>
+            Style: <input type="text" name="style" value="{{ item[2] }}" required><br>
+            <input type="submit" value="Update">
+        </form>
+    </div>
+{% endfor %}
+
+<h2>Sculpture and Statues</h2>
+{% for sculpture in sculptures %}
+    <div class="sculpture-item">
+        <p>ID: {{ sculpture[0] }} | Material: {{ sculpture[1] }} | Height: {{ sculpture[2] }}cm | Weight: {{ sculpture[3] }}kg</p>
+        <button class="edit-btn" data-section="Sculpture" data-id="{{ sculpture[0] }}">Edit</button>
+        <form action="/remove_sculpture/{{ sculpture[0] }}" method="post">
+            <input type="submit" value="Remove">
+        </form>
+        <form id="editFormSculpture{{ sculpture[0] }}" action="/modify_sculpture/{{ sculpture[0] }}" method="post" style="display: none;">
+            Material: <input type="text" name="material" value="{{ sculpture[1] }}" required><br>
+            Height (cm): <input type="number" step="0.01" name="height" value="{{ sculpture[2] }}" required><br>
+            Weight (kg): <input type="number" step="0.01" name="weight" value="{{ sculpture[3] }}" required><br>
+            <input type="submit" value="Update">
+        </form>
+    </div>
+{% endfor %}
+
+
+
+<h2>Paintings</h2>
+{% for painting in paintings %}
+    <div class="painting-item">
+        <p>ID: {{ painting[0] }} |  Paint Type: {{ painting[1] }} | Drawn On: {{ painting[2] }} | Style: {{ painting[3] }} </p>
+        <button class="edit-btn" data-section="Paintings" data-id="{{ painting[0] }}">Edit</button>
+        <form action="/remove_painting/{{ painting[0] }}" method="post">
+            <input type="submit" value="Remove">
+        </form>
+        <form id="editFormPaintings{{ painting[0] }}" action="/modify_painting/{{ painting[0] }}" method="post" style="display: none;">
+            Paint Type <input type="text" name="paint" value="{{ painting[1] }}" required><br>
+            Drawn On: <input type="text" name="drawn" value="{{ painting[2] }}" required><br>
+            Style: <input type="text" name="style" value="{{ painting[3] }}" required><br>
+            <input type="submit" value="Update">
+        </form>
+    </div>
+{% endfor %}
+ 
+
+
+
+
+
+
+
+<script>
+    document.querySelectorAll('.edit-btn').forEach(button => {
+        button.addEventListener('click', function() {
+            const section = this.getAttribute('data-section');
+            const id = this.getAttribute('data-id');
+            const formId = 'editForm' + section + id;
+            document.getElementById(formId).style.display = 'block';
+        });
+    });
+
+
+</script>
+</body>
+</html>
